@@ -1351,4 +1351,110 @@ public class RowSetExample {
 
 
 
+# Паттерн Observer
+
+## Что такое паттерн Observer?
+
+Паттерн Observer - это поведенческий паттерн проектирования, который позволяет определить зависимость одного или нескольких объектов от другого объекта таким образом, что при изменении состояния одного объекта все его зависимые объекты автоматически уведомляются и обновляются.
+
+## Для чего нужен паттерн Observer?
+
+Паттерн Observer полезен, когда у нас есть объект, изменения в котором могут быть интересны другим объектам. Он позволяет реализовать слабую связь между объектами, так что изменения в одном объекте автоматически отражаются на других объектах, не создавая тесных зависимостей.
+
+## Примеры на Java
+
+Давайте представим, что у нас есть система уведомлений, где пользователь может подписаться на определенные события и получать уведомления о них. Здесь паттерн Observer может быть очень полезен.
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Интерфейс для наблюдателя
+interface Observer {
+    void update(String message);
+}
+
+// Конкретный наблюдатель
+class User implements Observer {
+    private String name;
+
+    public User(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void update(String message) {
+        System.out.println(name + " получил уведомление: " + message);
+    }
+}
+
+// Интерфейс для наблюдаемого объекта
+interface Observable {
+    void addObserver(Observer observer);
+    void removeObserver(Observer observer);
+    void notifyObservers(String message);
+}
+
+// Конкретный наблюдаемый объект
+class NotificationSystem implements Observable {
+    private List<Observer> observers = new ArrayList<>();
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+
+    public void addNotification(String message) {
+        System.out.println("Добавлено новое уведомление: " + message);
+        notifyObservers(message);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Создаем наблюдателей
+        User user1 = new User("Пользователь 1");
+        User user2 = new User("Пользователь 2");
+
+        // Создаем наблюдаемый объект
+        NotificationSystem system = new NotificationSystem();
+
+        // Подписываем наблюдателей на уведомления
+        system.addObserver(user1);
+        system.addObserver(user2);
+
+        // Добавляем новое уведомление
+        system.addNotification("Новая статья опубликована!");
+
+        // Пользователь 1 отписывается от уведомлений
+        system.removeObserver(user1);
+
+        // Добавляем еще одно уведомление
+        system.addNotification("Новое событие!");
+
+    }
+}
+```
+
+## Особенности реализации
+
+1. **Связь наблюдателя и наблюдаемого**: Наблюдаемый объект должен иметь возможность добавлять, удалять и уведомлять своих наблюдателей.
+2. **Разделение ответственности**: Наблюдатель должен быть отделен от наблюдаемого объекта, чтобы обеспечить независимость и повторное использование кода.
+3. **Уведомление только при необходимости**: Наблюдаемый объект должен уведомлять своих наблюдателей только при изменении состояния, которое может быть интересно наблюдателям.
+
+Вот и всё! Надеюсь, этот конспект поможет понять паттерн Observer и его применение на практике. Если у вас есть какие-либо вопросы или нужна дополнительная помощь, не стесняйтесь спрашивать!
+
+
 
